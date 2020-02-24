@@ -2,34 +2,40 @@ import csv
 import numpy as np
 import pandas as pd
 
-infile = open('Holiday Schedule Ranking 2019.csv','r')
+data = pd.read_csv('Holiday Schedule Ranking 2019.csv', index_col = 0)
+cols = []
+for col in data.columns:
+    cols.append(col)
+numdates = len(cols)
 
-prefs = csv.reader(infile, delimiter = ',')
-header_row = next(prefs)
-header_row[0] = 'Employee'
-#print(header_row)
-names_list = []
-totalfile = {}
-for row in prefs:
-    names_list.append(row[0])
-    totalfile[row[0]] = row[1:]
+schedule = pd.DataFrame(np.full((3,numdates), "replace"), columns = cols)
 
-df = pd.DataFrame(totalfile)
-df = df.T
-df = df.astype(int)
+positions = ["one","two","three"]
 
-array = np.array(df.sum(axis=0))
-maxday = array.max()
-day = np.where(array == maxday)
-print(day[0])
+schedule.index = positions
 
-dayarray = df[7]
-index = dayarray.argsort()
-daysorted = dayarray[index]
-print(daysorted[:3])
+empdaysdict = {}
 
-zeros = np.zeros((20,14))
-print(zeros)
+for emp, row in data.iterrows():
+    day_count = 0
+    sortedlistofdates = row.sort_values(axis=0).index.tolist()
+    for x in range(13):
+        if day_count == 2:
+            break
 
+        if schedule.loc["one", sortedlistofdates[x]] == "replace":
+            schedule.loc["one", sortedlistofdates[x]] = emp
+            day_count +=1
 
+        elif schedule.loc["two", sortedlistofdates[x]] == "replace":
+            schedule.loc["two", sortedlistofdates[x]] = emp
+            day_count +=1
+        
+        elif schedule.loc["three", sortedlistofdates[x]] == "replace":
+            schedule.loc["three", sortedlistofdates[x]] = emp
+            day_count +=1
 
+        empdaysdict[emp] = day_count
+
+# then write dataframe to csv file
+schedule.to_csv("final_schedule.csv")
