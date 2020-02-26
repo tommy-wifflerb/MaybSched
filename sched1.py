@@ -12,29 +12,29 @@ print(cols)
 numdates = len(cols)
 print(numdates)
 # Make empty schedule
-schedule = pd.DataFrame(np.full((3,numdates), "replace"), columns = cols)
+schedule = pd.DataFrame(np.full((3,numdates), "Empty"), columns = cols)
 positions = ["One","Two","Three"]
 schedule.index = positions
 print(schedule)
 
 empdaysdict = {}
 # This is where we figure out the schedule
-for emp, row in data.iterrows():
+for employee, row in data.iterrows():
     workcount = 0
     sortedlistofdates = row.sort_values(axis=0).index.tolist()
     for x in range(numdates):
         if workcount == 2:
             break
-        if schedule.loc["One", sortedlistofdates[x]] == "replace":
-            schedule.loc["One", sortedlistofdates[x]] = emp
+        if schedule.loc["One", sortedlistofdates[x]] == "Empty":
+            schedule.loc["One", sortedlistofdates[x]] = employee
             workcount = workcount + 1
-        elif schedule.loc["Two", sortedlistofdates[x]] == "replace":
-            schedule.loc["Two", sortedlistofdates[x]] = emp
+        elif schedule.loc["Two", sortedlistofdates[x]] == "Empty":
+            schedule.loc["Two", sortedlistofdates[x]] = employee
             workcount = workcount + 1
-        elif schedule.loc["Three", sortedlistofdates[x]] == "replace":
-            schedule.loc["Three", sortedlistofdates[x]] = emp
+        elif schedule.loc["Three", sortedlistofdates[x]] == "Empty":
+            schedule.loc["Three", sortedlistofdates[x]] = employee
             workcount = workcount + 1
-        empdaysdict[emp] = workcount
+        empdaysdict[employee] = workcount
 
 print(empdaysdict)
 # write dataframe to csv file
